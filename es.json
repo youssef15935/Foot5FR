@@ -1,0 +1,14 @@
+{
+    
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "remember_me": "Recuérdame",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "sign_in": "Iniciar sesión",
+    "no_account": "¿No tienes cuenta?",
+    "create_now": "Crear ahora",
+    "error": {
+      "general": "Ocurrió un error. Inténtalo de nuevo más tarde."
+    }
+  }
+  

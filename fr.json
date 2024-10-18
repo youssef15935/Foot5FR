@@ -1,0 +1,14 @@
+{
+    "sign_in": "Connexion",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "remember_me": "Se souvenir de moi",
+    "forgot_password": "Mot de passe oublié?",
+    
+    "no_account": "Pas encore de compte?",
+    "create_now": "Créez-le maintenant",
+    "error": {
+      "general": "Une erreur est survenue. Veuillez réessayer plus tard."
+    }
+  }
+  
