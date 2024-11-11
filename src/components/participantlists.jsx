@@ -89,7 +89,7 @@ const ParticipantsList = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />  {/* Optional: Include the Navbar */}
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <h2 className="text-3xl font-bold text-center text-blue-900 mb-6">Participants</h2>
 
         {/* Shuffle Teams Button */}
@@ -102,9 +102,9 @@ const ParticipantsList = () => {
           </button>
         </div>
 
-        <div className="flex justify-center items-center space-x-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
           {/* Team A */}
-          <div className="w-1/3 bg-white p-4 rounded-lg shadow-md">
+          <div className="bg-white p-4 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-center text-blue-900 mb-4">Team A</h3>
             {teamA.length > 0 ? (
               <ul className="space-y-4">
@@ -123,14 +123,14 @@ const ParticipantsList = () => {
           </div>
 
           {/* VS Section */}
-          <div className="text-center flex items-center justify-center">
+          <div className="text-center flex justify-center">
             <Font family="Metal Mania">
-              <div className="text-3xl font-bold text-blue-900">VS</div>
+              <div className="text-4xl font-bold text-blue-900">VS</div>
             </Font>
           </div>
 
           {/* Team B */}
-          <div className="w-1/3 bg-white p-4 rounded-lg shadow-md ">
+          <div className="bg-white p-4 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-center text-red-600 mb-4">Team B</h3>
             {teamB.length > 0 ? (
               <ul className="space-y-4">

@@ -135,7 +135,7 @@ const AvailableMatches = () => {
   }
 
   return (
-    <Font family="Poppins"  >
+    <Font family="Poppins">
       <div className="min-h-screen bg-gray-300">
         <Navbar />
 
@@ -149,10 +149,10 @@ const AvailableMatches = () => {
         </div>
 
         {/* Page Layout */}
-        <div className="flex justify-center space-x-8 py-12 px-8">
-          {/* Map Section with increased width */}
-          <div className="w-1/2">
-            <h2 className="text-2xl font-bold  text-center text-blue-900">
+        <div className="flex flex-col md:flex-row justify-center space-y-8 md:space-y-0 md:space-x-8 py-12 px-8">
+          {/* Map Section */}
+          <div className="w-full md:w-1/2">
+            <h2 className="text-2xl font-bold text-center text-blue-900 mb-6">
               Localisation
             </h2>
             <div className="px-10 mb-10 rounded-lg">
@@ -160,65 +160,63 @@ const AvailableMatches = () => {
             </div>
           </div>
 
-          {/* Available Matches Section with reduced width */}
-          <div className="w-1/2 p-10 mt-1">
-            <div className="space-y-">
+          {/* Available Matches Section */}
+          <div className="w-full md:w-1/2 p-10 mt-1">
+            <div className="space-y-6 ">
               {matches.length > 0 ? (
                 matches.map((match, index) => (
                   <div
                     key={match._id}
-                    className="relative bg-cover bg-center text-white rounded-lg shadow-md overflow-hidden h-40 flex items-center justify-between p-4 mt-5"
+                    className="relative bg-cover bg-center text-white rounded-lg shadow-md overflow-hidden min-h-80 sm:min-h-64 flex items-center justify-between p-4"
                     style={{
                       backgroundImage: `url('https://www.sallertaine.fr/wp-content/uploads/2024/02/Le-Five.jpg')`,
                     }}
                   >
                     <div className="absolute inset-0 bg-black opacity-65"></div>
-                    <div className="relative z-10 flex-grow  text-sm ">
-                      <h3 className="text-2xl text-white font-bold">Match {index + 1} </h3>
+                    <div className="relative z-10 flex-grow text-lg">
+                      <h3 className="text-3xl text-white font-bold">
+                        Match {index + 1}
+                      </h3>
                       <p>
-                        <strong>Location:</strong> {match.location}
+                        <strong className="text-xl">Location:</strong> {match.location}
                       </p>
                       <p>
-                        <strong>Time:</strong> {formatTime(match.time)}
+                        <strong className="text-xl">Time:</strong> {formatTime(match.time)}
                       </p>
                       <p>
-                        <strong>Date:</strong> {formatDate(match.date)}
+                        <strong className="text-xl">Date:</strong> {formatDate(match.date)}
                       </p>
                       <p>
-                        <strong>Creator:</strong> {match.creatorId.fullname}
+                        <strong className="text-xl">Creator:</strong> {match.creatorId.fullname}
                       </p>
                       <p>
-                        <strong>Players Needed:</strong> {match.playersNeeded}
+                        <strong className="text-xl">Players Needed:</strong> {match.playersNeeded}
                       </p>
                       <p>
-                        <strong>Players Joined:</strong>{" "}
+                        <strong className="text-xl">Players Joined:</strong>{" "}
                         {10 - match.playersNeeded} / 10
                       </p>
                     </div>
 
                     <div className="relative z-10 flex flex-col items-center space-y-2">
-                      
-
-                      {/* "Joined" message above the Quit button */}
                       {match.participants.includes(userId) && (
                         <>
-                          <button className="w-full ml-auto px-4 py-2 text-white bg-gray-400 rounded-lg cursor-not-allowed">
+                          <button className="w-full ml-auto px-4 py-2 text-white bg-gray-400 rounded-lg cursor-not-allowed text-lg">
                             Already Joined
                           </button>
                           <button
                             className="w-full px-4 py-2 text-white bg-red-600 hover:bg-red-500 rounded-lg"
-                            onClick={() => handleQuitClick(match._id)} // Show confirmation modal
+                            onClick={() => handleQuitClick(match._id)}
                           >
                             Quit
                           </button>
                         </>
                       )}
 
-                      {/* Join Button if the user is not part of the match */}
                       {!match.participants.includes(userId) &&
                         match.creatorId !== userId && (
                           <button
-                            className={`ml-auto px-4 py-2 text-white rounded-lg ${
+                            className={`ml-auto px-4 py-2 text-white rounded-lg text-lg ${
                               match.playersNeeded === 0
                                 ? "bg-gray-400 cursor-not-allowed"
                                 : "bg-blue-900 hover:bg-blue-700"
@@ -231,7 +229,7 @@ const AvailableMatches = () => {
                               : "Match Complet"}
                           </button>
                         )}
-                        {/* "Locate My Match" button opening Google Maps */}
+
                       <a
                         href={getGoogleMapsLink(match.location)}
                         target="_blank"
@@ -239,24 +237,18 @@ const AvailableMatches = () => {
                         className="flex justify-center items-center"
                       >
                         <FaMapMarkerAlt
-                          size={25} // Set icon size (40px in this case)
-                          color="red" // Set the color of the icon to red
-                          title="Locate My Match" 
-                          // Tooltip when hovering over the icon
+                          size={35}
+                          color="red"
+                          title="Locate My Match"
                         />
                       </a>
-
-                      {/* Message if the user is the creator */}
-                      {match.creatorId === userId && (
-                        <button className="ml-auto px-4 py-2 bg-gray-500 rounded-lg cursor-not-allowed">
-                          Rejoindre
-                        </button>
-                      )}
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-3xl text-blue-900 font-bold">No matches available</p>
+                <p className="text-3xl text-blue-900 font-bold">
+                  No matches available
+                </p>
               )}
             </div>
           </div>

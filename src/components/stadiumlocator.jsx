@@ -54,7 +54,7 @@ const StadiumLocator = ({ onSelectLocation = () => {} }) => { // Default to empt
     const fetchStadiums = async () => {
       try {
         const response = await fetch(
-          'https://equipements.sports.gouv.fr/api/explore/v2.1/catalog/datasets/data-es/records?limit=100&refine=equip_aps_nom%3A%22Football%20%2F%20Football%20en%20salle%20(Futsal)%22&refine=dep_code_filled%3A%2256%22'
+          'https://equipements.sports.gouv.fr/api/explore/v2.1/catalog/datasets/data-es/records?limit=100&refine=dep_code_filled%3A%2256%22'
         );
         const data = await response.json();
         const stadiumData = data.results
@@ -93,7 +93,7 @@ const StadiumLocator = ({ onSelectLocation = () => {} }) => { // Default to empt
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="map-container shadow-lg rounded-lg overflow-hidden" style={{ maxWidth: '100%', height: '600px' }}>
+      <div className="map-container shadow-lg rounded-lg overflow-hidden" style={{ maxWidth: '100%', height:'500px' }}>
         <MapContainer center={userLocation} zoom={13} style={{ height: '100%', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

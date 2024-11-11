@@ -9,10 +9,8 @@ const matchSchema = new mongoose.Schema({
     default: 10, // Default 10 players needed
   },
   creatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the creator (User ID)
-  creatorName: { type: String, required: false, }, // Name of the creator, optional
+  creatorName: { type: String, required: false, }, // Name of the creator
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs (references)
-
-  // Additional Fields
   isExpired: { type: Boolean, default: false } // Mark the match as expired
 });
 

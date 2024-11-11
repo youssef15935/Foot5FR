@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate for redirection
-import Navbar from './navbar';  // Import Navbar component
+import { useNavigate } from 'react-router-dom';
 import Font from 'react-font';
 
 const Register = () => {
   const [form, setForm] = useState({ fullname: '', email: '', password: '', birthdate: '', level: '' });
-  const [message, setMessage] = useState('');  // State for success or error message
-  const navigate = useNavigate();  // Initialize useNavigate for redirection
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,7 +18,7 @@ const Register = () => {
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1;  // Adjust age if the birthdate hasn't passed this year
+      return age - 1;
     }
     return age;
   };
@@ -27,7 +26,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if the user is at least 16 years old
     if (isOldEnough(form.birthdate) < 16) {
       setMessage('You must be at least 16 years old to create an account.');
       return;
@@ -42,92 +40,115 @@ const Register = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Account created successfully:', data);
-
-        // Set success message
         setMessage('Account created successfully! Redirecting to sign-in...');
-        
-        // Redirect to login page after 2 seconds
         setTimeout(() => {
-          navigate('/');  // Redirect to login page ("/")
+          navigate('/');
         }, 1000);
       } else {
-        const errorData = await response.json();  // Parse the error message
-        setMessage(errorData.error);  // Display the error message from the backend
+        const errorData = await response.json();
+        setMessage(errorData.error);
       }
     } catch (error) {
       setMessage('An error occurred. Please try again.');
-      console.error('Error:', error);
     }
   };
 
   return (
-    <Font family='Poppins'>
+    <Font family="Poppins">
       <div>
         <div className="min-h-screen bg-cover bg-center flex items-center justify-center bg-gray-300">
           <div className="bg-white p-6 rounded-lg shadow-md w-96">
             <h2 className="text-2xl font-bold mb-4 text-center">Create Account</h2>
 
-            {/* Display success or error message */}
             {message && (
               <p className={`text-center mb-4 ${message.includes('successfully') ? 'text-green-500' : 'text-red-500'}`}>
                 {message}
               </p>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                name="fullname"
-                type="text"
-                placeholder="Full Name"
-                onChange={handleChange}
-                value={form.fullname}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              />
-              <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                onChange={handleChange}
-                value={form.email}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              />
-              <input
-                name="password"
-                type="password"
-                placeholder="Password"
-                onChange={handleChange}
-                value={form.password}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              />
-              
-              <label className="block text-gray-700">Date of Birth</label>
-              <input
-                name="birthdate"
-                type="date"
-                onChange={handleChange}
-                value={form.birthdate}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              />
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Full Name Field with Floating Label */}
+              <div className="relative">
+                <input
+                  name="fullname"
+                  type="text"
+                  placeholder=" "
+                  onChange={handleChange}
+                  value={form.fullname}
+                  className="peer w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required
+                />
+                <label className="absolute left-3 -top-2.5 text-gray-500 text-sm transition-all bg-white px-1 -translate-y-1/2 transform scale-100 origin-left pointer-events-none peer-placeholder-shown:top-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:scale-90 peer-focus:text-blue-500">
+                  Full Name
+                </label>
+              </div>
 
-              {/* New dropdown for skill level */}
-              <label className="block text-gray-700">Football Skill Level</label>
-              <select
-                name="level"
-                onChange={handleChange}
-                value={form.level}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              >
-                <option value="">Select your level</option>
-                <option value="Good">Good</option>
-                <option value="Medium">Medium</option>
-                <option value="Mediocre">Mediocre</option>
-              </select>
+              {/* Email Field with Floating Label */}
+              <div className="relative">
+                <input
+                  name="email"
+                  type="email"
+                  placeholder=" "
+                  onChange={handleChange}
+                  value={form.email}
+                  className="peer w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required
+                />
+                <label className="absolute left-3 -top-2.5 text-gray-500 text-sm transition-all bg-white px-1 -translate-y-1/2 transform scale-100 origin-left pointer-events-none peer-placeholder-shown:top-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:scale-90 peer-focus:text-blue-500">
+                  Email
+                </label>
+              </div>
+
+              {/* Password Field with Floating Label */}
+              <div className="relative">
+                <input
+                  name="password"
+                  type="password"
+                  placeholder=" "
+                  onChange={handleChange}
+                  value={form.password}
+                  className="peer w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required
+                />
+                <label className="absolute left-3 -top-2.5 text-gray-500 text-sm transition-all bg-white px-1 -translate-y-1/2 transform scale-100 origin-left pointer-events-none peer-placeholder-shown:top-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:scale-90 peer-focus:text-blue-500">
+                  Password
+                </label>
+              </div>
+
+              {/* Date of Birth Field with Floating Label */}
+              <div className="relative">
+                <input
+                  name="birthdate"
+                  type="date"
+                  placeholder=" "
+                  onChange={handleChange}
+                  value={form.birthdate}
+                  className="peer w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required
+                />
+                <label className="absolute left-3 -top-2.5 text-gray-500 text-sm transition-all bg-white px-1 -translate-y-1/2 transform scale-100 origin-left pointer-events-none peer-placeholder-shown:top-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:scale-90 peer-focus:text-blue-500">
+                  Date of Birth
+                </label>
+              </div>
+
+              {/* Football Skill Level Field with Floating Label */}
+              <div className="relative">
+                <select
+                  name="level"
+                  onChange={handleChange}
+                  value={form.level}
+                  className="peer w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white"
+                  required
+                >
+                  <option value="" disabled></option>
+                  <option value="Good">Good</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Mediocre">Mediocre</option>
+                </select>
+                <label className="absolute left-3 -top-2.5 text-gray-500 text-sm transition-all bg-white px-1 -translate-y-1/2 transform scale-100 origin-left pointer-events-none peer-placeholder-shown:top-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:scale-90 peer-focus:text-blue-500">
+                  Football Skill Level
+                </label>
+              </div>
 
               <button
                 type="submit"

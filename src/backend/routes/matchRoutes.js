@@ -1,7 +1,7 @@
 const express = require('express');
-const Match = require('../models/Match');  // Ensure your Match model is imported
+const Match = require('../models/Match');  
 const router = express.Router();
-const User = require('../models/User');  // Ensure you import the User model
+const User = require('../models/User');  
 const mongoose = require('mongoose');
 const cron = require('node-cron');
 const Message = require('../models/Message');
@@ -83,9 +83,9 @@ router.post('/create', async (req, res) => {
       date,
       time,
       playersNeeded,
-      creatorId,      // Make sure this is passed in the request
-      creatorName,    // Optional, but you can include this if needed
-      participants: [creatorId] // Initially, no participants
+      creatorId,      
+      creatorName,    
+      participants: [creatorId] 
     });
 
     await newMatch.save();
@@ -98,7 +98,6 @@ router.post('/create', async (req, res) => {
 
 
 // Route to quit a match and increase playersNeeded
-// Route to quit a match
 router.put('/quit/:id', async (req, res) => {
   const { id } = req.params; // Match ID
   const { userId } = req.body; // User ID
@@ -125,7 +124,7 @@ router.put('/quit/:id', async (req, res) => {
   }
 });
 
-// Route to delete all matches
+// Route to delete all matches for test only
 router.delete('/delete-all-matches', async (req, res) => {
   try {
     await Match.deleteMany({});  // Deletes all matches

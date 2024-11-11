@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const router = express.Router();
-const Match = require('../models/Match');  // Ensure the path is correct based on your project structure
+const Match = require('../models/Match');  
 const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path'); 
@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Create and save the new user
-    const newUser = new User({ fullname, email, password, birthdate, level });
+    const newUser = new User({ fullname, email, password, birthdate, level});
     await newUser.save();
 
     res.status(201).json({ message: 'Account created successfully!' });
@@ -60,10 +60,10 @@ router.post('/login', async (req, res) => {
 // Get all users
 router.get('/users', async (req, res) => {
   try {
-    const users = await User.find({}, '-password'); // Exclude the password field for security
-    res.json(users);
+      const users = await User.find({}, '-password'); // Exclude passwords for security
+      res.json(users);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' });
+      res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
 //delete
@@ -127,6 +127,7 @@ router.put('/update/:userId', async (req, res) => {
   }
 });
 
+//get all joined match for a user
 router.get('/:userId/joined-matches', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -217,7 +218,7 @@ router.delete('/:id/delete-photo', async (req, res) => {
   }
 });
 
-// Route to delete all users
+// Route to delete all users  just for test
 router.delete('/delete-all-users', async (req, res) => {
   try {
     await User.deleteMany({});  // This will delete all users

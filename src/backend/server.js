@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const matchRoutes = require('./routes/matchRoutes');
+
 const path = require('path');
 const Message = require('./models/Message'); // MongoDB model for messages
 const User = require('./models/User');
@@ -13,17 +14,13 @@ const User = require('./models/User');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 const server = http.createServer(app); // Create server using HTTP for Socket.io
 
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: '*', // Allow all origins for now (you can restrict this in production)
+    origin: '*', // Allow all origins
   }
 });
 
@@ -55,7 +52,7 @@ io.on('connection', (socket) => {
       // Fetch the user's fullname using the userId
       const user = await User.findById(userId);
       
-      // Save the message in MongoDB (optional step if you are saving messages in the database)
+      // Save the message in MongoDB 
       const newMessage = new Message({
         roomId,
         userId,
@@ -86,11 +83,6 @@ app.use('/api', userRoutes);
 app.use('/api', matchRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
-
-
-
-
-
 
 // Serve static files for image uploads (profile photos, etc.)
 app.use('/uploads', express.static(path.join(__dirname, './routes/uploads/')));

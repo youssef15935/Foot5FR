@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";  // Import useNavigate
-import Navbar from "./navbar";  // Import the Navbar component
+import { useNavigate } from "react-router-dom";
+import Navbar from "./navbar";
 import Font from "react-font";
 
 const CreateMatch = () => {
@@ -18,7 +18,22 @@ const CreateMatch = () => {
   const [messageType, setMessageType] = useState(""); // State to store message type (success or error)
   const [loading, setLoading] = useState(false); // State for showing loading screen
   const [showSuggestions, setShowSuggestions] = useState(true); // State to control suggestion visibility
-  const navigate = useNavigate(); // Initialize useNavigate for redirection
+  const navigate = useNavigate();
+
+  // Function to calculate distance between two coordinates in kilometers
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  };
 
   // Disable times between 00:00 and 06:00 AM
   const handleTimeChange = (e) => {
@@ -54,12 +69,12 @@ const CreateMatch = () => {
     }
   }, []);
 
-  // Fetch nearby stadiums based on the user's location
+  // Fetch nearby stadiums based on the user's location and filter within 50 km
   useEffect(() => {
     const fetchStadiums = async () => {
       try {
         const response = await fetch(
-          "https://equipements.sports.gouv.fr/api/explore/v2.1/catalog/datasets/data-es/records?limit=20&refine=equip_aps_nom%3A%22Football%20%2F%20Football%20en%20salle%20(Futsal)%22&refine=dep_code_filled%3A%2256%22"
+          "https://equipements.sports.gouv.fr/api/explore/v2.1/catalog/datasets/data-es/records?limit=100&refine=dep_code_filled%3A%2256%22"
         );
         const data = await response.json();
         const stadiumData = data.results
@@ -78,14 +93,16 @@ const CreateMatch = () => {
             (stadium) =>
               stadium.latitude &&
               stadium.longitude &&
-              stadium.latitude >= 41 &&
-              stadium.latitude <= 51 &&
-              stadium.longitude >= -5.5 &&
-              stadium.longitude <= 10
+              calculateDistance(
+                userLocation[0],
+                userLocation[1],
+                stadium.latitude,
+                stadium.longitude
+              ) <= 50 // Filter stadiums within 50 km
           );
 
         setStadiums(stadiumData);
-        setFilteredStadiums(stadiumData); // Initialize filteredStadiums with all stadiums
+        setFilteredStadiums(stadiumData); // Initialize filteredStadiums with stadiums in range
       } catch (error) {
         console.error("Error fetching stadium data:", error);
       }
@@ -98,8 +115,7 @@ const CreateMatch = () => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
     if (name === "location") {
-      setShowSuggestions(true); // Show suggestions when typing in the location field
-      // Filter stadiums based on user input (matches name, address, or postal code)
+      setShowSuggestions(true);
       const searchTerm = value.toLowerCase();
       const filtered = stadiums.filter(
         (stadium) =>
@@ -107,7 +123,7 @@ const CreateMatch = () => {
           stadium.address.toLowerCase().includes(searchTerm) ||
           stadium.postalCode.toLowerCase().includes(searchTerm)
       );
-      setFilteredStadiums(filtered); // Update the filtered stadium list
+      setFilteredStadiums(filtered);
     }
   };
 
@@ -186,7 +202,7 @@ const CreateMatch = () => {
               <input
                 name="date"
                 type="date"
-                min={todayDate} // Disable past dates
+                min={todayDate}
                 placeholder="Date"
                 onChange={handleChange}
                 value={form.date}
@@ -233,7 +249,7 @@ const CreateMatch = () => {
                 name="time"
                 type="time"
                 placeholder="Time"
-                onChange={handleTimeChange} // Use custom time validation handler
+                onChange={handleTimeChange}
                 value={form.time}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                 required
@@ -242,6 +258,7 @@ const CreateMatch = () => {
               <input
                 name="playersNeeded"
                 type="number"
+                min={1}
                 placeholder="Players Needed"
                 onChange={handleChange}
                 value={form.playersNeeded}

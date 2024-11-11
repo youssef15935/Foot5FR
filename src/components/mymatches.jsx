@@ -100,8 +100,8 @@ const MyMatches = () => {
     <div className="min-h-screen bg-gray-300">
       <Navbar />
       <Font family="Poppins">
-        <div className="flex justify-center space-x-8 py-12 px-8">
-          <div className="w-2/3">
+        <div className="flex flex-col lg:flex-row justify-center space-x-0 lg:space-x-8 py-12 px-4 lg:px-8">
+          <div className="w-full lg:w-2/3">
             <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">
               My Matches
             </h2>
@@ -111,7 +111,7 @@ const MyMatches = () => {
                 matches.map((match, index) => (
                   <div
                     key={match._id}
-                    className="relative bg-cover bg-center text-white rounded-lg shadow-md overflow-hidden"
+                    className="relative bg-cover bg-center text-white rounded-lg shadow-md overflow-hidden max-w-3xl mx-auto" // Set max width and center
                     style={{
                       backgroundImage: `url('https://www.sallertaine.fr/wp-content/uploads/2024/02/Le-Five.jpg')`,
                     }}
@@ -166,12 +166,12 @@ const MyMatches = () => {
 
             {/* Chat Section (Toggled) */}
             {chatOpen && (
-              <div className="fixed bottom-4 right-4 bg-gray-100 p-6 rounded-lg shadow-md w-80 max-h-96 flex flex-col justify-between">
-                <h3 className="text-xl ml-10 mb-4 ">Chat for the Match</h3>
-                <div className="chat-box overflow-y-scroll p-2 rounded-lg flex-grow ">
+              <div className="fixed bottom-4 right-4 bg-gray-100 p-4 rounded-lg shadow-md w-full max-w-xs max-h-96 flex flex-col justify-between"> {/* Adjusted size */}
+                <h3 className="text-xl mb-4 text-center">Chat for the Match</h3>
+                <div className="chat-box overflow-y-scroll p-2 rounded-lg flex-grow">
                   {messages.map((msg, index) => (
                     <div key={index} className="bg-gray-200 rounded-md p-2 mb-1">
-                      <strong className='text-blue-500 text-xl font-thin'>{msg.username}</strong>
+                      <strong className="text-blue-500 text-xl font-thin">{msg.username}</strong>
                       <p className="text-sm text-gray-700">{msg.message}</p>
                       <span className="text-xs text-gray-400">{msg.timestamp}</span>
                     </div>
