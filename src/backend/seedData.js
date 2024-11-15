@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs'); // Import bcrypt for hashing passwords
 const User = require('./models/User'); // Adjust path to your user model file
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://youssef2:youssef2@cluster0.uhrkd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {});
+mongoose.connect('', {});
 
 // Generate and insert fake data
 async function generateFakeData() {
