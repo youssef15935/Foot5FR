@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Font from 'react-font';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Font from "react-font";
+import { IoFootballOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 const Register = () => {
-  const [form, setForm] = useState({ fullname: '', email: '', password: '', birthdate: '', level: '' });
-  const [message, setMessage] = useState('');
+  const [form, setForm] = useState({
+    fullname: "",
+    email: "",
+    password: "",
+    birthdate: "",
+    level: "",
+  });
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,7 +25,10 @@ const Register = () => {
     const birthDate = new Date(birthdate);
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
       return age - 1;
     }
     return age;
@@ -27,41 +38,58 @@ const Register = () => {
     e.preventDefault();
 
     if (isOldEnough(form.birthdate) < 16) {
-      setMessage('You must be at least 16 years old to create an account.');
+      setMessage("You must be at least 16 years old to create an account.");
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:5000/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setMessage('Account created successfully! Redirecting to sign-in...');
+        setMessage("Account created successfully! Redirecting to sign-in...");
         setTimeout(() => {
-          navigate('/');
+          navigate("/");
         }, 1000);
       } else {
         const errorData = await response.json();
         setMessage(errorData.error);
       }
     } catch (error) {
-      setMessage('An error occurred. Please try again.');
+      setMessage("An error occurred. Please try again.");
     }
   };
 
   return (
     <Font family="Poppins">
-      <div>
-        <div className="min-h-screen bg-cover bg-center flex items-center justify-center bg-gray-300">
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* Left Section with solid background */}
+        <div className="w-full lg:w-1/3 bg-blue-900 flex flex-col items-center justify-center space-y-4 p-8">
+          <IoFootballOutline className="text-9xl text-white" />
+          <h2 className="text-4xl font-bold text-center text-white tracking-wider">
+            FOOT5FR
+          </h2>
+        </div>
+
+        {/* Right Section with form */}
+        <div className="w-full lg:w-2/3 flex items-center justify-center bg-gray-100">
           <div className="bg-white p-6 rounded-lg shadow-md w-96">
-            <h2 className="text-2xl font-bold mb-4 text-center">Create Account</h2>
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Create Account
+            </h2>
 
             {message && (
-              <p className={`text-center mb-4 ${message.includes('successfully') ? 'text-green-500' : 'text-red-500'}`}>
+              <p
+                className={`text-center mb-4 ${
+                  message.includes("successfully")
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
                 {message}
               </p>
             )}
@@ -157,6 +185,11 @@ const Register = () => {
                 Create Account
               </button>
             </form>
+            <div className="flex items-center justify-center mt-5">
+              <Link to="/" className="text-blue-500 hover:underline  text-sm font-thin">
+                Already Have An Account
+              </Link>
+            </div>
           </div>
         </div>
       </div>

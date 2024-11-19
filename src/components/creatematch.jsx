@@ -212,7 +212,7 @@ const CreateMatch = () => {
     <div className="min-h-screen bg-cover bg-center bg-gray-300">
       <Navbar />
       <Font family="Poppins">
-        <div className="flex justify-center py-12 px-8">
+        <div className="flex justify-center py-20 mt-10">
           <div className="relative w-full max-w-lg bg-white p-8 rounded-lg shadow-lg z-10">
             <p className="text-red-500 flex text-center">
               Please count yourself in the needs, always players needed - 1.

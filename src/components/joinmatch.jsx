@@ -40,7 +40,6 @@ const JoinMatch = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
         setSuccessMessage('You have successfully joined the match! Redirecting...');
         setTimeout(() => {
           navigate('/my-matches'); // Redirect to the user's joined matches after 2 seconds
@@ -77,7 +76,7 @@ const JoinMatch = () => {
             <p className="text-lg"><strong>Location:</strong> {match.location}</p>
             <p className="text-lg"><strong>Time:</strong> {match.time}</p>
             <p className="text-lg"><strong>Players Needed:</strong> {match.playersNeeded} / 10</p>
-            <p className="text-lg"><strong>Created by:</strong> {match.creatorId.fullname}</p> {/* Show creator's name */}
+            <p className="text-lg"><strong>Created by:</strong> {match.creatorId ? match.creatorId.fullname : "Unknown"}</p> {/* Show creator's name */}
           </div>
 
           {/* Success message */}

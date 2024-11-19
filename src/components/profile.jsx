@@ -144,7 +144,7 @@ const Profile = () => {
             <div className="mt-2 text-center">
               <button
                 onClick={() => setShowModal(true)} // Open modal
-                className="bg-red-600 text-white p-3 rounded-lg hover:bg-red-500 focus:outline-none w-full"
+                className="bg-red-600 text-white p-3 rounded-lg hover:bg-red-500 focus:outline-none w-full mt-10"
               >
                 Delete Account
               </button>

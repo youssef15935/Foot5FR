@@ -187,7 +187,7 @@ const AvailableMatches = () => {
                         <strong className="text-xl">Date:</strong> {formatDate(match.date)}
                       </p>
                       <p>
-                        <strong className="text-xl">Creator:</strong> {match.creatorId.fullname}
+                        <strong className="text-xl">Creator:</strong> {match.creatorId ? match.creatorId.fullname : "Unknown"}
                       </p>
                       <p>
                         <strong className="text-xl">Players Needed:</strong> {match.playersNeeded}
