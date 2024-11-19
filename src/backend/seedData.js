@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 
+<<<<<<< HEAD
 mongoose.connect('mongodb+srv://youssef2:youssef2@cluster0.uhrkd.mongodb.net/test1', {});
+=======
+// Connect to MongoDB
+mongoose.connect('', {});
+>>>>>>> origin/main
 
 async function generateFakeData() {
   const users = [];

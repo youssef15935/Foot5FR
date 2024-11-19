@@ -14,7 +14,6 @@ const matchSchema = new mongoose.Schema({
   isExpired: { type: Boolean, default: false }, // Mark the match as expired
   reserved: { type: Boolean, default: false }
 });
-
 // Add a pre-save hook to check and update `isExpired` based on the date and time
 matchSchema.pre('save', function (next) {
   const currentDate = new Date();
@@ -29,6 +28,8 @@ matchSchema.pre('save', function (next) {
 });
 
 const Match = mongoose.model('Match', matchSchema);
+//unique match in the db
+
 
 module.exports = Match;
 

@@ -11,18 +11,18 @@ const CreateMatch = () => {
     playersNeeded: "",
   });
 
-  const [stadiums, setStadiums] = useState([]); // State to store stadiums
-  const [filteredStadiums, setFilteredStadiums] = useState([]); // State to store filtered stadiums
-  const [userLocation, setUserLocation] = useState([46.603354, 1.888334]); // Default center for France
-  const [message, setMessage] = useState(""); // State to store the message
-  const [messageType, setMessageType] = useState(""); // State to store message type (success or error)
-  const [loading, setLoading] = useState(false); // State for showing loading screen
-  const [showSuggestions, setShowSuggestions] = useState(true); // State to control suggestion visibility
+  const [stadiums, setStadiums] = useState([]);
+  const [filteredStadiums, setFilteredStadiums] = useState([]);
+  const [userLocation, setUserLocation] = useState([46.603354, 1.888334]);
+  const [validTimes, setValidTimes] = useState([]);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [reserving, setReserving] = useState(false);
   const navigate = useNavigate();
 
-  // Function to calculate distance between two coordinates in kilometers
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the Earth in km
+    const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -32,28 +32,25 @@ const CreateMatch = () => {
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
+    return R * c;
   };
 
-  // Disable times between 00:00 and 06:00 AM
-  const handleTimeChange = (e) => {
-    const timeValue = e.target.value;
-    const [hours, minutes] = timeValue.split(":").map(Number);
-    if (hours >= 0 && hours < 6) {
-      setMessage("Please select a time between 6 AM and midnight.");
-      setMessageType("error");
-      setForm({ ...form, time: "" });
-    } else {
-      setMessage("");
-      setForm({ ...form, time: timeValue });
+  // Generate valid times in 45-minute intervals
+  const generateValidTimes = () => {
+    const times = [];
+    for (let hour = 6; hour < 24; hour++) { // From 6 AM to 11 PM
+      times.push(`${hour < 10 ? `0${hour}` : hour}:00`);
     }
+    return times;
   };
 
-  // Get today's date in YYYY-MM-DD format
+  useEffect(() => {
+    setValidTimes(generateValidTimes());
+  }, []);
+
   const todayDate = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    // Use Geolocation to get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -69,7 +66,6 @@ const CreateMatch = () => {
     }
   }, []);
 
-  // Fetch nearby stadiums based on the user's location and filter within 50 km
   useEffect(() => {
     const fetchStadiums = async () => {
       try {
@@ -86,7 +82,7 @@ const CreateMatch = () => {
               longitude: coordonnees?.lon,
               address: inst_adresse || "Address not available",
               postalCode: inst_cp || "Postal code not available",
-              area: arr_name || "Area not available", // Adding arr_name
+              area: arr_name || "Area not available",
             };
           })
           .filter(
@@ -98,11 +94,11 @@ const CreateMatch = () => {
                 userLocation[1],
                 stadium.latitude,
                 stadium.longitude
-              ) <= 50 // Filter stadiums within 50 km
+              ) <= 50
           );
 
         setStadiums(stadiumData);
-        setFilteredStadiums(stadiumData); // Initialize filteredStadiums with stadiums in range
+        setFilteredStadiums(stadiumData);
       } catch (error) {
         console.error("Error fetching stadium data:", error);
       }
@@ -127,12 +123,57 @@ const CreateMatch = () => {
     }
   };
 
+  const handleReserve = async () => {
+    const creatorId = localStorage.getItem("userId");
+    if (!creatorId) {
+      setMessage("Creator ID is missing. Please log in again.");
+      setMessageType("error");
+      return false;
+    }
+
+    try {
+      setReserving(true);
+      const response = await fetch("http://localhost:5000/api/matches/reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          location: form.location,
+          date: form.date,
+          time: form.time,
+          creatorId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setMessage(errorData.error || "Error reserving location.");
+        setMessageType("error");
+        return false;
+      }
+
+      setMessage("Location reserved successfully.");
+      setMessageType("success");
+      return true;
+    } catch (error) {
+      setMessage("An error occurred while reserving the location.");
+      setMessageType("error");
+      return false;
+    } finally {
+      setReserving(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const creatorId = localStorage.getItem("userId");
     const creatorName = localStorage.getItem("userFullName");
-  
+
+    const isReserved = await handleReserve();
+    if (!isReserved) {
+      return;
+    }
+
     const newMatch = {
       date: form.date,
       location: form.location,
@@ -141,19 +182,18 @@ const CreateMatch = () => {
       creatorId: creatorId,
       creatorName: creatorName,
     };
-  
+
     try {
       const response = await fetch("http://localhost:5000/api/matches/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMatch),
       });
-  
+
       if (response.ok) {
         setForm({ date: "", location: "", time: "", playersNeeded: "" });
         setMessage("Match created successfully!");
         setMessageType("success");
-        setLoading(true);
         setTimeout(() => {
           navigate("/available-matches");
         }, 2000);
@@ -168,21 +208,15 @@ const CreateMatch = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-xl text-blue-500">Loading...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-cover bg-center bg-gray-300">
-      <Navbar /> 
+      <Navbar />
       <Font family="Poppins">
         <div className="flex justify-center py-12 px-8">
           <div className="relative w-full max-w-lg bg-white p-8 rounded-lg shadow-lg z-10">
-            <p className="text-red-500 flex text-center">Please count yourself in the needs , always players needed - 1 </p>
+            <p className="text-red-500 flex text-center">
+              Please count yourself in the needs, always players needed - 1.
+            </p>
             <br />
             <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">
               Create a Match
@@ -235,9 +269,12 @@ const CreateMatch = () => {
                           setShowSuggestions(false);
                         }}
                       >
-                        <span className="font-semibold">{stadium.name}</span><br />
-                        <span className="text-sm text-gray-600">{stadium.address}</span><br />
-                        <span className="text-sm text-gray-600">{stadium.postalCode}</span><br />
+                        <span className="font-semibold">{stadium.name}</span>
+                        <br />
+                        <span className="text-sm text-gray-600">{stadium.address}</span>
+                        <br />
+                        <span className="text-sm text-gray-600">{stadium.postalCode}</span>
+                        <br />
                         <span className="text-sm text-gray-600">{stadium.area}</span>
                       </div>
                     ))}
@@ -245,15 +282,22 @@ const CreateMatch = () => {
                 )}
               </div>
 
-              <input
+              <select
                 name="time"
-                type="time"
-                placeholder="Time"
-                onChange={handleTimeChange}
+                onChange={handleChange}
                 value={form.time}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select Time
+                </option>
+                {validTimes.map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
 
               <input
                 name="playersNeeded"
@@ -269,8 +313,9 @@ const CreateMatch = () => {
               <button
                 type="submit"
                 className="w-full bg-blue-900 text-white p-3 rounded-lg hover:bg-blue-800"
+                disabled={reserving}
               >
-                Create
+                {reserving ? "Reserving..." : "Create"}
               </button>
             </form>
           </div>

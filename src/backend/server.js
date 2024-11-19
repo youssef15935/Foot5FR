@@ -25,10 +25,7 @@ const io = new Server(server, {
 });
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
+mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log('Connected to MongoDB Atlas');
 }).catch((error) => {
   console.error('MongoDB connection error:', error);

@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const cron = require('node-cron');
 const Message = require('../models/Message');
 
+
+
 // Route to fetch all available matches
 router.get('/matches/available', async (req, res) => {
   try {
@@ -65,11 +67,97 @@ router.put('/join/:id', async (req, res) => {
 
 
 
+// Route to reserve a match location temporarily
+router.post('/reserve', async (req, res) => {
+  const { location, date, time } = req.body;
+
+  try {
+    // Check for conflicting matches or reservations
+    const existingMatch = await Match.findOne({
+      location,
+      date,
+      time,
+    });
+
+    if (existingMatch) {
+      return res.status(400).json({ error: 'Location is already reserved or a match exists for this time.' });
+    }
+
+    // If no conflicts, return success
+    res.status(200).json({ message: 'Location is available for reservation.' });
+  } catch (error) {
+    console.error('Error during reservation check:', error);
+    res.status(500).json({ error: 'Failed to check reservation.' });
+  }
+});
 
 
 
-// Route to create a new match with creator info
+// Route to create a new match and confirm reservation
 router.post('/create', async (req, res) => {
+  const { location, date, time, playersNeeded, creatorId, creatorName } = req.body;
+
+  try {
+    // Calculate the match start and end times
+    const matchStartTime = new Date(date);
+    const [hours, minutes] = time.split(":").map(Number); // Extract hours and minutes
+    matchStartTime.setHours(hours, minutes, 0, 0); // Set the time on the matchStartTime
+
+    const matchEndTime = new Date(matchStartTime.getTime() + 1 * 60 * 60 * 1000); 
+
+    // Query for conflicting matches at the same location
+    const conflictingMatches = await Match.find({
+      location,
+      $or: [
+        {
+          // Conflict if an existing match starts during the new match
+          $and: [
+            { date: { $eq: date } }, // Same date
+            { time: { $gte: new Date(matchStartTime) } },
+            { time: { $lt: new Date(matchEndTime) } },
+          ],
+        },
+        {
+          // Conflict if an existing match ends during the new match
+          $and: [
+            { date: { $eq: date } }, // Same date
+            { time: { $lt: new Date(matchStartTime) } },
+            {
+              time: {
+                $gte: new Date(matchStartTime.getTime() - 1 * 60 * 60 * 1000), 
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    if (conflictingMatches.length > 0) {
+      return res
+        .status(400)
+        .json({ error: 'Another match is already scheduled at this location within 1 hours.' });
+    }
+
+    // If no conflicts, create the new match
+    const newMatch = new Match({
+      location,
+      date,
+      time,
+      playersNeeded,
+      creatorId,
+      creatorName,
+      participants: [creatorId], // Add creator as the first participant
+    });
+
+    await newMatch.save();
+    res.status(201).json(newMatch);
+  } catch (error) {
+    console.error('Error creating match:', error);
+    res.status(500).json({ error: 'Failed to create match' });
+  }
+});
+// Route to create a new match with creator info
+/*router.post('/create', async (req, res) => {
   const { location, date, time, playersNeeded, creatorId, creatorName } = req.body;
 
   if (!creatorId) {
@@ -93,7 +181,7 @@ router.post('/create', async (req, res) => {
     console.error('Error creating match:', error);
     res.status(500).json({ error: 'Failed to create match' });
   }
-});
+});*/
 
 
 // Route to quit a match and increase playersNeeded
