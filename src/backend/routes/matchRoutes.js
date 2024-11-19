@@ -1,7 +1,6 @@
 const express = require('express');
 const Match = require('../models/Match');  
 const router = express.Router();
-const User = require('../models/User');  
 const mongoose = require('mongoose');
 const cron = require('node-cron');
 const Message = require('../models/Message');

@@ -1,25 +1,33 @@
-const { faker } = require('@faker-js/faker'); // Ensure the latest version is installed
+const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // Import bcrypt for hashing passwords
-const User = require('./models/User'); // Adjust path to your user model file
+const bcrypt = require('bcryptjs');
+const User = require('./models/User');
 
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://youssef2:youssef2@cluster0.uhrkd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {});
+mongoose.connect('mongodb+srv://youssef2:youssef2@cluster0.uhrkd.mongodb.net/test1', {});
 
-// Generate and insert fake data
 async function generateFakeData() {
   const users = [];
-  for (let i = 0; i < 20; i++) { // Adjust the number for more data
-    const hashedPassword = await bcrypt.hash(faker.internet.password(), 10); // Hash the generated password
+  let counter = 0;
+  for (let i = 0; i < 100; i++) {
+    const plainPassword = faker.internet.password(); // Generate a plaintext password
+    const hashedPassword = await bcrypt.hash(plainPassword, 10); // Hash the password
+    
+    
     users.push({
-      fullname: faker.person.fullName(), // Updated for latest faker version
+      fullname: faker.person.fullName(),
       email: faker.internet.email(),
-      password: hashedPassword, // Use the hashed password
-      birthdate: faker.date.birthdate({ min: 1950, max: 2010, mode: 'year' }),
+      password: hashedPassword, // Store hashed password
+      birthdate: faker.date.birthdate({ min: 1950, max: 2008, mode: 'year' }),
       level: faker.helpers.arrayElement(['Good', 'Medium', 'Mediocre']),
       isverified: faker.datatype.boolean(),
-      photo: faker.image.avatar(),
+      photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s",
     });
+
+    counter +=1;
+    
+    
+    console.log(`Generated account: Email: ${users[i].email}, Password: ${plainPassword},counter: ${counter}` );
+ 
   }
 
   try {

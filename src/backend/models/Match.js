@@ -11,7 +11,8 @@ const matchSchema = new mongoose.Schema({
   creatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the creator (User ID)
   creatorName: { type: String, required: false, }, // Name of the creator
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs (references)
-  isExpired: { type: Boolean, default: false } // Mark the match as expired
+  isExpired: { type: Boolean, default: false }, // Mark the match as expired
+  reserved: { type: Boolean, default: false }
 });
 
 // Add a pre-save hook to check and update `isExpired` based on the date and time
